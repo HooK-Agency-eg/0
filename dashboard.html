@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard | Hook</title><meta name="robots" content="noindex">
+<link rel="stylesheet" href="style.css"></head><body>
+<main>
+<section class="phero"><div class="wrap"><span class="script" data-ar="لوحة التحكم">Admin</span><h1 data-ar="الداشبورد">Dashboard</h1></div></section>
+<section style="padding-top:20px"><div class="wrap" id="dash"><p>…</p></div></section>
+</main><script src="config.js"></script><script src="seed.js"></script><script src="app.js"></script>
+<script>
+let ST=null;
+const bars=(rows,key,label,fmt)=>{const mx=Math.max(1,...rows.map(r=>r[key]));return '<div class="bars">'+rows.slice(0,8).map(r=>'<div class="bar"><span>'+esc(r[label])+'</span><i style="width:'+Math.max(2,r[key]/mx*100)+'%"></i><b>'+(fmt?fmt(r):r[key])+'</b></div>').join('')+'</div>'};
+const kpi=(n,en,a)=>'<div class="card kpi"><b>'+n+'</b>'+t(en,a)+'</div>';
+function draw(){
+  if(!ST)return;const s=ST,mx=Math.max(1,...s.days.map(d=>d.n)),c=s.counts;
+  $('dash').innerHTML=
+   '<div class="kpis">'+kpi(s.visits,'Total visits','إجمالي الزيارات')+kpi(s.today,'Visits today','زيارات النهارده')+kpi(s.week,'Last 7 days','آخر 7 أيام')+kpi(s.unique,'Unique visitors','زوار مختلفين')+kpi(s.accounts,'Accounts','عدد الحسابات')+kpi(s.orders.length,'Orders','الطلبات')+kpi(s.revenue+' '+cur(),'Order value','قيمة الطلبات')+'</div>'
+  +'<div class="cols"><div class="card"><h3>'+t('Visits, last 14 days','الزيارات، آخر 14 يوم')+'</h3><div class="days">'+s.days.map(d=>'<div style="height:'+Math.max(2,d.n/mx*100)+'%" title="'+d.d+'"><span>'+(d.n||'')+'</span></div>').join('')+'</div></div>'
+  +'<div class="card"><h3>'+t('Most viewed projects','أكتر المشاريع مشاهدة')+'</h3>'+(s.topWork.some(w=>w.views)?bars(s.topWork,'views','name'):'<p>'+t('No views yet.','لسه مفيش مشاهدات.')+'</p>')+'</div>'
+  +'<div class="card"><h3>'+t('Best-selling packages','الباقات الأكتر مبيعاً')+'</h3>'+(s.topProducts.length?bars(s.topProducts,'qty','name',r=>r.qty+' · '+r.revenue):'<p>'+t('No orders yet.','لسه مفيش طلبات.')+'</p>')+'</div>'
+  +'<div class="card"><h3>'+t('Page info','معلومات الصفحات')+'</h3><p>'+t('Projects','المشاريع')+': '+c.work+' · '+t('Clients','العملاء')+': '+c.clients+' · '+t('Packages','الباقات')+': '+c.products+'</p><div class="scroll"><table><tr><th>'+t('Page','الصفحة')+'</th><th>'+t('Visits','الزيارات')+'</th></tr>'+s.pages.map(p=>'<tr><td dir="ltr">'+esc(p.p)+'</td><td>'+p.n+'</td></tr>').join('')+'</table></div>'
+   +'<p style="margin-top:14px"><a class="btn" href="portfolio.html">'+t('Edit projects','تعديل المشاريع')+'</a> <a class="btn" href="shop.html">'+t('Edit price quotes','تعديل عروض الأسعار')+'</a> <a class="btn" href="index.html">'+t('Edit clients','تعديل العملاء')+'</a></p></div></div>'
+  +'<div class="card" style="margin-top:20px"><h3>'+t('Orders','الطلبات')+'</h3><div class="scroll"><table><tr><th>'+t('Date','التاريخ')+'</th><th>'+t('User','المستخدم')+'</th><th>'+t('Items','العناصر')+'</th><th>'+t('Total','الإجمالي')+'</th><th>'+t('Status','الحالة')+'</th></tr>'
+   +s.orders.map(o=>'<tr><td>'+esc(o.at.slice(0,10))+'</td><td>'+esc(o.user||'-')+'</td><td>'+o.items.map(i=>esc(i.name)+' × '+i.q).join(', ')+'</td><td>'+o.total+'</td><td><select data-o="'+esc(o.id)+'">'+['new','confirmed','done','cancelled'].map(x=>'<option'+(x==o.status?' selected':'')+'>'+x+'</option>').join('')+'</select></td></tr>').join('')+'</table></div></div>'
+  +'<div class="card" style="margin-top:20px"><h3>'+t('Accounts','الحسابات')+' ('+s.accounts+')</h3><div class="scroll"><table><tr><th>'+t('Username','المستخدم')+'</th><th>'+t('Email','الإيميل')+'</th><th>'+t('Role','الدور')+'</th><th>'+t('Joined','التسجيل')+'</th></tr>'
+   +s.users.map(u=>'<tr><td>'+esc(u.username)+'</td><td dir="ltr">'+esc(u.email)+'</td><td>'+esc(u.role)+'</td><td>'+esc(u.at.slice(0,10))+'</td></tr>').join('')+'</table></div></div>'
+  +'<form class="card" id="pw" style="margin-top:20px"><h3>'+t('Change admin password','تغيير باسورد الأدمن')+'</h3><label><span>'+t('Current password','الباسورد الحالي')+'</span><input name="old" type="password" autocomplete="current-password" required></label><label><span>'+t('New password (8+ characters)','الباسورد الجديد (8 حروف أو أكتر)')+'</span><input name="new" type="password" autocomplete="new-password" minlength="8" required></label><button class="btn">'+t('Save','حفظ')+'</button><p class="msg" id="pm"></p></form>';
+  $('pw').onsubmit=async e=>{e.preventDefault();const r=await post('/api/admin/password',Object.fromEntries(new FormData(e.target))),j=await r.json();$('pm').className='msg'+(r.ok?'':' err');$('pm').textContent=r.ok?t('Password changed.','تم تغيير الباسورد.'):errT(j.error);if(r.ok)e.target.reset()};
+  document.querySelectorAll('[data-o]').forEach(sel=>sel.onchange=()=>fetch('/api/admin/orders/'+sel.dataset.o,{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify({status:sel.value})}).then(load));
+}
+async function load(){const r=await fetch('/api/admin/stats');if(r.status===401){location.href='login.html';return}ST=await r.json();draw()}
+load().catch(()=>{$('dash').innerHTML='<p>'+t('The server is not running.','السيرفر مش شغال.')+'</p>'});
+document.addEventListener('langchange',draw);
+</script></body></html>
