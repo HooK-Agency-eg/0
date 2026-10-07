@@ -11,7 +11,7 @@
 </div></section>
 </main><script src="config.js"></script><script src="seed.js"></script><script src="app.js"></script>
 <script>
-const CATS=[['all','All','الكل'],['Design','Design','تصميم'],['Content','Content','كتابة محتوي'],,['Logo Design','Logo Design','تصيمم شعارات'],['Media Buying','Media Buying','إعلانات ممولة ']];
+const CATS=[['all','All','الكل'],['Design','Design','تصميم'],['Content','Content','كتابة محتوي'],['Logo Design','Logo Design','تصيمم شعارات'],['Media Buying','Media Buying','إعلانات ممولة ']];
 let cf='all';
 const vio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){vio.unobserve(e.target);trackView(e.target.dataset.id)}}),{threshold:.6});
 onContent(()=>{
