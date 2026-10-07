@@ -74,7 +74,7 @@ section{padding:90px 0}
 .track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;scroll-behavior:smooth;padding:8px 4px}
 .track::-webkit-scrollbar{display:none}
 .slide{position:relative;flex:0 0 min(520px,86%);scroll-snap-align:start;border-radius:var(--r);overflow:hidden;background:var(--card);color:var(--cfg);border:1.5px solid var(--cline)}
-.slide .im{background:var(#fffdef);height:360px;display:block;overflow:hidden;line-height:0}
+.slide .im{background:#fffdef;height:360px;display:block;overflow:hidden;line-height:0}
 .slide .im img{width:100%;height:100%;object-fit:contain;transition:transform .6s}
 .slide:hover .im img{transform:scale(1.06)}
 .slide .cap{padding:18px 24px 24px}
