@@ -100,7 +100,7 @@ section{padding:90px 0}
 .tabs button:hover{border-color:var(--fg)}
 .tabs button[aria-pressed=true]{background:var(--acc);border-color:var(--acc);color:var(--accfg)}
 .card.work{padding:0;overflow:hidden;display:flex;flex-direction:column}
-.card.work a{display:block;background:var(--g);line-height:0;overflow:hidden}
+.card.work a{display:block;background:#fffdef;line-height:0;overflow:hidden}
 .card.work img{width:100%;height:320px;object-fit:contain;transition:transform .6s}
 .card.work:hover img{transform:scale(1.06)}
 .card.work .tag,.card.work h3,.card.work p{margin-inline:24px}
